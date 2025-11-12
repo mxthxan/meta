@@ -1,0 +1,321 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --- Base Styles and Scrollbar Styles --- */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #06b6d4 #0a0a0a;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #06b6d4, #a855f7);
+  border-radius: 4px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #22d3ee, #c084fc);
+}
+
+body {
+  /* ENSURES PURE BLACK BACKGROUND */
+  background: #000000;
+  color: #ffffff;
+  overflow-x: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* -------------------------------------------------------------------------- */
+/* --- HERO SECTION CUSTOM STYLES --- */
+/* -------------------------------------------------------------------------- */
+
+/* 1. Light Cycle Simulation CONTAINER (Maintains the 3D perspective) */
+.light-cycle-simulation {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* Use the same perspective transform so elements sit on the implied grid */
+    transform: perspective(1000px) rotateX(60deg); 
+    transform-origin: center 70%;
+    z-index: 2;
+}
+
+
+/* 2. ANIMATED LIGHT TRAIL BIKES (Enhanced Neon Trails) */
+
+/* Base style for a light trail bike dot */
+.light-trail-bike {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    z-index: 3;
+    transform-origin: center;
+    /* This makes the background transparent for the inset shadow trail to work */
+    background: transparent; 
+}
+
+/* The trail effect is applied via animation keyframes that apply massive INSET box-shadows.
+    The color and head light are handled by the box-shadow property in the trail-shadow keyframes. */
+
+
+/* Light Bike 1: Cyan/Teal loop (LONGER TRAIL) */
+.light-trail-bike.trail-1 {
+    --trail-color: #00ffff;
+    animation: trail-movement-1 10s linear infinite, trail-shadow-1 10s linear infinite;
+}
+
+/* Light Bike 2: Magenta/Pink loop (Staggered start) */
+.light-trail-bike.trail-2 {
+    --trail-color: #ff00ff;
+    animation: trail-movement-2 10s linear infinite 5s, trail-shadow-2 10s linear infinite 5s;
+}
+
+/* Light Bike 3: Yellow/Orange (New Bike) */
+.light-trail-bike.trail-3 {
+    --trail-color: #fce303;
+    animation: trail-movement-3 12s linear infinite 2s, trail-shadow-3 12s linear infinite 2s;
+}
+
+/* Light Bike 4: Orange/Red (New Bike) */
+.light-trail-bike.trail-4 {
+    --trail-color: #ff5500;
+    animation: trail-movement-4 15s linear infinite 8s, trail-shadow-4 15s linear infinite 8s;
+}
+
+/* Light Bike 5: Green (New Bike) */
+.light-trail-bike.trail-5 {
+    --trail-color: #00ff00;
+    animation: trail-movement-5 8s linear infinite 1s, trail-shadow-5 8s linear infinite 1s;
+}
+
+
+/* Keyframes for MOVEMENT (Translate and Rotate) */
+/* (Movement keyframes remain unchanged) */
+
+/* Movement 1: Cyan Bike (Moves Right, Down, Left, Up in a square) */
+@keyframes trail-movement-1 {
+    0%, 100% { transform: translate(10vw, 70vh) rotate(0deg); }
+    25%  { transform: translate(50vw, 70vh) rotate(0deg); }
+    25.01% { transform: translate(50vw, 70vh) rotate(90deg); }
+    50%  { transform: translate(50vw, 30vh) rotate(90deg); }
+    50.01% { transform: translate(50vw, 30vh) rotate(180deg); }
+    75%  { transform: translate(10vw, 30vh) rotate(180deg); }
+    75.01% { transform: translate(10vw, 30vh) rotate(270deg); }
+    99.99% { transform: translate(10vw, 70vh) rotate(270deg); }
+}
+
+/* Movement 2: Magenta Bike (Moves Up, Right, Down, Left in a square) */
+@keyframes trail-movement-2 {
+    0%, 100% { transform: translate(30vw, 80vh) rotate(270deg); }
+    25%  { transform: translate(30vw, 40vh) rotate(270deg); }
+    25.01% { transform: translate(30vw, 40vh) rotate(0deg); }
+    50%  { transform: translate(70vw, 40vh) rotate(0deg); }
+    50.01% { transform: translate(70vw, 40vh) rotate(90deg); }
+    75%  { transform: translate(70vw, 80vh) rotate(90deg); }
+    75.01% { transform: translate(70vw, 80vh) rotate(180deg); }
+    99.99% { transform: translate(30vw, 80vh) rotate(180deg); }
+}
+
+/* Movement 3: Yellow Bike (Moves Left, Down, Right, Up) */
+@keyframes trail-movement-3 {
+    0%, 100% { transform: translate(90vw, 30vh) rotate(180deg); }
+    25%  { transform: translate(50vw, 30vh) rotate(180deg); }
+    25.01% { transform: translate(50vw, 30vh) rotate(90deg); }
+    50%  { transform: translate(50vw, 90vh) rotate(90deg); }
+    50.01% { transform: translate(50vw, 90vh) rotate(0deg); }
+    75%  { transform: translate(90vw, 90vh) rotate(0deg); }
+    75.01% { transform: translate(90vw, 90vh) rotate(270deg); }
+    99.99% { transform: translate(90vw, 30vh) rotate(270deg); }
+}
+
+/* Movement 4: Orange Bike (Moves Right, Up, Left, Down - Longer Rectangle) */
+@keyframes trail-movement-4 {
+    0%, 100% { transform: translate(5vw, 95vh) rotate(0deg); }
+    25%  { transform: translate(80vw, 95vh) rotate(0deg); }
+    25.01% { transform: translate(80vw, 95vh) rotate(270deg); }
+    50%  { transform: translate(80vw, 5vh) rotate(270deg); }
+    50.01% { transform: translate(80vw, 5vh) rotate(180deg); }
+    75%  { transform: translate(5vw, 5vh) rotate(180deg); }
+    75.01% { transform: translate(5vw, 5vh) rotate(90deg); }
+    99.99% { transform: translate(5vw, 95vh) rotate(90deg); }
+}
+
+/* Movement 5: Green Bike (Moves Up, Left, Down, Right - Smaller Square) */
+@keyframes trail-movement-5 {
+    0%, 100% { transform: translate(20vw, 70vh) rotate(270deg); }
+    25%  { transform: translate(20vw, 50vh) rotate(270deg); }
+    25.01% { transform: translate(20vw, 50vh) rotate(180deg); }
+    50%  { transform: translate(40vw, 50vh) rotate(180deg); }
+    50.01% { transform: translate(40vw, 50vh) rotate(90deg); }
+    75%  { transform: translate(40vw, 70vh) rotate(90deg); }
+    75.01% { transform: translate(40vw, 70vh) rotate(0deg); }
+    99.99% { transform: translate(20vw, 70vh) rotate(0deg); }
+}
+
+
+/* Keyframes for NEON TRAIL SHADOWS (Must match movement keyframes) */
+/* The trail is created using a massive, blurred INSET box-shadow that points opposite the direction of travel. */
+/* I've increased the blur and spread for a LONGER trail. The first two shadows create the trail, the third is the glowing bike head. */
+
+/* Base shadow definition for trail creation */
+#define TRAIL_SHADOW 0 0 50px 10px %s inset, 0 0 15px %s
+
+@keyframes trail-shadow-1 {
+    /* Trail left */
+    0%, 100% { box-shadow: 50vw 0 50px 10px rgba(0,255,255,0.7) inset, 0 0 15px var(--trail-color); } 
+    /* Trail up */
+    25.01% { box-shadow: 0 50vh 50px 10px rgba(0,255,255,0.7) inset, 0 0 15px var(--trail-color); }
+    /* Trail right */
+    50.01% { box-shadow: -50vw 0 50px 10px rgba(0,255,255,0.7) inset, 0 0 15px var(--trail-color); }
+    /* Trail down */
+    75.01% { box-shadow: 0 -50vh 50px 10px rgba(0,255,255,0.7) inset, 0 0 15px var(--trail-color); }
+}
+
+@keyframes trail-shadow-2 {
+    /* Trail down */
+    0%, 100% { box-shadow: 0 -50vh 50px 10px rgba(255,0,255,0.7) inset, 0 0 15px var(--trail-color); } 
+    /* Trail left */
+    25.01% { box-shadow: 50vw 0 50px 10px rgba(255,0,255,0.7) inset, 0 0 15px var(--trail-color); }
+    /* Trail up */
+    50.01% { box-shadow: 0 50vh 50px 10px rgba(255,0,255,0.7) inset, 0 0 15px var(--trail-color); }
+    /* Trail right */
+    75.01% { box-shadow: -50vw 0 50px 10px rgba(255,0,255,0.7) inset, 0 0 15px var(--trail-color); }
+}
+
+@keyframes trail-shadow-3 {
+    /* Trail right */
+    0%, 100% { box-shadow: -50vw 0 50px 10px rgba(252,227,3,0.7) inset, 0 0 15px var(--trail-color); } 
+    /* Trail up */
+    25.01% { box-shadow: 0 50vh 50px 10px rgba(252,227,3,0.7) inset, 0 0 15px var(--trail-color); } 
+    /* Trail left */
+    50.01% { box-shadow: 50vw 0 50px 10px rgba(252,227,3,0.7) inset, 0 0 15px var(--trail-color); } 
+    /* Trail down */
+    75.01% { box-shadow: 0 -50vh 50px 10px rgba(252,227,3,0.7) inset, 0 0 15px var(--trail-color); }
+}
+
+@keyframes trail-shadow-4 {
+    /* Trail left */
+    0%, 100% { box-shadow: 50vw 0 50px 10px rgba(255,85,0,0.7) inset, 0 0 15px var(--trail-color); } 
+    /* Trail down */
+    25.01% { box-shadow: 0 -50vh 50px 10px rgba(255,85,0,0.7) inset, 0 0 15px var(--trail-color); } 
+    /* Trail right */
+    50.01% { box-shadow: -50vw 0 50px 10px rgba(255,85,0,0.7) inset, 0 0 15px var(--trail-color); } 
+    /* Trail up */
+    75.01% { box-shadow: 0 50vh 50px 10px rgba(255,85,0,0.7) inset, 0 0 15px var(--trail-color); }
+}
+
+@keyframes trail-shadow-5 {
+    /* Trail down */
+    0%, 100% { box-shadow: 0 -50vh 50px 10px rgba(0,255,0,0.7) inset, 0 0 15px var(--trail-color); } 
+    /* Trail right */
+    25.01% { box-shadow: -50vw 0 50px 10px rgba(0,255,0,0.7) inset, 0 0 15px var(--trail-color); }
+    /* Trail up */
+    50.01% { box-shadow: 0 50vh 50px 10px rgba(0,255,0,0.7) inset, 0 0 15px var(--trail-color); }
+    /* Trail left */
+    75.01% { box-shadow: 50vw 0 50px 10px rgba(0,255,0,0.7) inset, 0 0 15px var(--trail-color); }
+}
+
+
+/* 3. Global Text/Card Styles (Rest of the CSS) */
+.neon-text {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #00ffff, 0 0 40px #00ffff;
+}
+.neon-text-multi {
+    text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #ff00c1, 0 0 40px #ff00c1, 0 0 80px #00ffff;
+}
+
+.text-3d {
+    color: #fff;
+    text-shadow: 
+        1px 1px 0 #ccc,
+        2px 2px 0 #999,
+        3px 3px 0 #666,
+        4px 4px 0 #333,
+        5px 5px 10px rgba(0, 0, 0, 0.5),
+        6px 6px 15px rgba(0, 0, 0, 0.3);
+    transform: perspective(500px) rotateX(10deg);
+    transform-style: preserve-3d;
+}
+.glow-text {
+    text-shadow: 0 0 8px rgba(192, 132, 252, 0.8);
+}
+
+.holographic-card {
+    background: rgba(10, 10, 10, 0.7);
+    border: 1px solid rgba(0, 255, 255, 0.5);
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.3), inset 0 0 10px rgba(0, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    transition: all 0.3s;
+}
+
+.holographic-card:hover {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.7), inset 0 0 20px rgba(0, 255, 255, 0.4);
+}
+
+/* 🔄 UPDATED NEON BUTTON STYLES (Replaced previous definition) */
+.neon-button {
+    background: rgba(255, 0, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid #ff00ff;
+    color: #ff00ff;
+    transition: all 0.3s ease;
+    border-radius: 9999px; /* Added border-radius back for button shape */
+    text-shadow: 0 0 10px rgba(255, 0, 255, 0.8);
+    box-shadow: 0 0 10px #ff00ff, 0 0 20px rgba(255, 0, 255, 0.5); /* Added box-shadow for resting glow */
+    overflow: hidden;
+}
+
+.neon-button:hover {
+    /* Removed the previous background style and used the new hover style */
+    background: rgba(255, 0, 255, 0); 
+    box-shadow: 0 0 15px #ff00ff, 0 0 30px #a855f7; /* Retained enhanced hover glow */
+}
+/* END UPDATED NEON BUTTON STYLES */
+
+
+/* 4. Glitch Text Styles (Keyframes in tailwind.config.js) */
+.glitch {
+    position: relative;
+    animation: glitch 3s infinite linear alternate-reverse; 
+    padding: 0 5px;
+}
+
+.glitch::before,
+.glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: inherit;
+}
+
+.glitch::before {
+    left: 2px;
+    text-shadow: -1px 0 #ff00c1;
+    clip: rect(44px, 450px, 56px, 0);
+    animation: glitch-anim 2s infinite linear alternate-reverse;
+}
+.glitch::after {
+    left: -2px;
+    text-shadow: -1px 0 #00ffff;
+    clip: rect(85px, 450px, 100px, 0);
+    animation: glitch-anim 3s infinite linear alternate-reverse;
+}
