@@ -4,93 +4,94 @@ interface LoadingScreenProps {
   onComplete: () => void;
 }
 
-// 🕶️ Video Intro, White Flash, and VR Loading Screen Component
+// 🕶️ Video Intro and White Flash Component
 export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
-  const [progress, setProgress] = useState(0);
-  const [phase, setPhase] = useState<'video-intro' | 'white-flash' | 'worn-view'>('video-intro');
+  const [phase, setPhase] = useState<'video-intro' | 'white-flash' | 'complete'>('video-intro');
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // 🚀 UPDATED VIDEO URL
-  const VR_INTRO_VIDEO_URL = 'https://ik.imagekit.io/s2s89dfe5/Untitled%20video%20-%20Made%20with%20Clipchamp.mp4';
+  // 🚀 UPDATED VIDEO URL (Kept for completeness)
+  const VR_INTRO_VIDEO_URL = 'https://ik.imagekit.io/jacw2jgvs/loading.mp4';
   
-  // Set the transition time to exactly 40 seconds as requested.
-  const TRANSITION_TIME_SECONDS = 40;
+  // Set the video play time to exactly 13 seconds as requested.
+  const VIDEO_PLAY_TIME_SECONDS = 13;
+  
+  // Define the duration for the white flash animation in milliseconds (1s for 'animate-white-flash')
+  const WHITE_FLASH_DURATION_MS = 1000;
 
-  const handleComplete = useCallback(() => {
-    // Delay final onComplete call slightly after progress reaches 100
-    setTimeout(onComplete, 500);
+  // The component is considered "complete" when the phase transitions out of 'white-flash'.
+  const handleCompletion = useCallback(() => {
+    // This function will be called 1 second after the white-flash starts.
+    setPhase('complete');
+    // Call the parent's onComplete to transition to the main content (Hero Section).
+    onComplete();
   }, [onComplete]);
 
-  // Function to transition from video to the white flash and then to the loading screen
-  const switchToLoadingScreen = useCallback(() => {
+  // Function to transition from video to the white flash and then trigger onComplete
+  const switchToWhiteFlashAndComplete = useCallback(() => {
     const videoElement = videoRef.current;
     if (videoElement) {
       videoElement.pause();
-      // Set to the white flash phase
-      setPhase('white-flash');
     }
 
-    // Wait for the 1s white flash animation to finish, then show the loading content
-    setTimeout(() => {
-      setPhase('worn-view');
-    }, 1000);
-  }, []);
+    // Set to the white flash phase
+    setPhase('white-flash');
+
+    // Wait for the white flash animation to finish (1 second) and then trigger onComplete.
+    // This is set to fire 1000ms after the flash starts, which is 13 + 1.0 = 14 seconds from start.
+    setTimeout(handleCompletion, WHITE_FLASH_DURATION_MS);
+  }, [handleCompletion]);
 
   useEffect(() => {
-    let progressInterval: NodeJS.Timeout | null = null;
     let videoAutoTransitionTimeout: NodeJS.Timeout | null = null;
-
+    
+    // Auto transition logic for the video phase
     if (phase === 'video-intro') {
-      // Set a timeout for the automatic transition at 40s (in case onTimeUpdate is missed)
+      // Set a timeout for the automatic transition after 13 seconds.
+      // This acts as a fallback/primary transition trigger.
       videoAutoTransitionTimeout = setTimeout(() => {
         if (phase === 'video-intro') {
-          switchToLoadingScreen();
+          switchToWhiteFlashAndComplete();
         }
-      }, TRANSITION_TIME_SECONDS * 1000 + 100); // Add a small buffer
-    }
-    else if (phase === 'worn-view') {
-      setProgress(0); // Reset progress for the new phase
-      progressInterval = setInterval(() => {
-        setProgress(prev => {
-          if (prev >= 100) {
-            clearInterval(progressInterval!);
-            handleComplete();
-            return 100;
-          }
-          return Math.min(100, prev + 0.8);
-        });
-      }, 25);
+      }, VIDEO_PLAY_TIME_SECONDS * 1000); 
     }
 
     return () => {
-      if (progressInterval) clearInterval(progressInterval);
+      // Clear the timeout when the component unmounts or phase changes
       if (videoAutoTransitionTimeout) clearTimeout(videoAutoTransitionTimeout);
     };
-  }, [phase, handleComplete, switchToLoadingScreen]);
+  }, [phase, switchToWhiteFlashAndComplete]);
 
-  // Handler for video's time update (Triggers the switch exactly at 40 seconds)
+  // Handler for video's time update (Triggers the switch exactly at 13 seconds)
   const handleVideoTimeUpdate = (e: React.SyntheticEvent<HTMLVideoElement, Event>) => {
     const videoElement = e.currentTarget;
-    if (videoElement.currentTime >= TRANSITION_TIME_SECONDS && phase === 'video-intro') {
-      switchToLoadingScreen();
+    // Use a small buffer to ensure the 13.00s point is hit, or rely on the setTimeout above.
+    if (videoElement.currentTime >= VIDEO_PLAY_TIME_SECONDS && phase === 'video-intro') {
+      switchToWhiteFlashAndComplete();
     }
   };
 
-  const contentVisible = phase === 'worn-view';
   const showVideo = phase === 'video-intro';
   const showFlashEffect = phase === 'white-flash';
+  const isComponentActive = phase !== 'complete';
 
-  const progressText = `ACCESSING SERVERS... ${Math.min(100, progress.toFixed(0))}%`;
-  const mainLoadingText = progress < 100 ? progressText : 'LOADING COMPLETE. ENTERING METAVERSE...';
+  // The entire component fades out when phase is 'complete'.
+  if (!isComponentActive && !showFlashEffect) {
+    return null; 
+  }
 
   return (
     <>
-      <div className={`fixed inset-0 z-50 bg-black overflow-hidden flex items-center justify-center`}>
+      {/* The main container is shown only until the 'complete' phase. */}
+      <div 
+        className={`fixed inset-0 z-50 bg-black overflow-hidden flex items-center justify-center 
+                    transition-opacity duration-500 ease-out 
+                    ${phase === 'complete' ? 'opacity-0' : 'opacity-100'}`}
+      >
 
         {/* --- VIDEO INTRO ELEMENT (Phase: 'video-intro') --- */}
         <div
-          className={`absolute inset-0 bg-black
-                      transition-opacity duration-500 ease-in
+          // This container ensures the video is the primary visual element
+          className={`absolute inset-0 bg-black transition-opacity duration-500 ease-in
                       ${showVideo ? 'opacity-100 z-30' : 'opacity-0 z-0'}`}
           style={{ display: showVideo ? 'block' : 'none' }}
         >
@@ -101,15 +102,15 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
             muted
             playsInline
             className="w-full h-full object-cover"
-            onTimeUpdate={handleVideoTimeUpdate} // Trigger the transition at 40s
+            onTimeUpdate={handleVideoTimeUpdate} // Trigger the transition at 13s
           />
 
           {/* Skip Button */}
           <button
-            onClick={switchToLoadingScreen} // Skip immediately triggers the white flash
+            onClick={switchToWhiteFlashAndComplete} // Skip immediately triggers the white flash
             className="absolute bottom-6 right-6 px-6 py-3 bg-white bg-opacity-20 text-white
-                        rounded-full backdrop-blur-sm hover:bg-opacity-30 transition-all
-                        text-lg font-semibold z-40 border border-white border-opacity-30 shadow-lg"
+                       rounded-full backdrop-blur-sm hover:bg-opacity-30 transition-all
+                       text-lg font-semibold z-40 border border-white border-opacity-30 shadow-lg"
           >
             SKIP
           </button>
@@ -117,53 +118,17 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
 
         {/* --- WHITE FLASH TRANSITION (Phase: 'white-flash') --- */}
         <div
-          // This div is a solid white screen that fades out using the animate-white-flash utility
+          // The white flash is now the final stage before removal.
           className={`absolute inset-0 z-40 bg-white
                       ${showFlashEffect ? 'opacity-100 animate-white-flash' : 'opacity-0'}`}
           style={{
+            // Show the flash div, but it will be instantly made transparent by the CSS animation.
+            // The white flash effect is 1s, which aligns with the setTimeout(handleCompletion, 1000).
             display: showFlashEffect ? 'block' : 'none',
           }}
         />
 
-        {/* --- WORN VIEW CONTENT (Phase: 'worn-view') --- */}
-        <div className={`absolute inset-0 flex flex-col items-center justify-center z-20
-                          transition-opacity duration-700 delay-300
-                          ${contentVisible ? 'opacity-100' : 'opacity-0'}`}>
-
-          {/* Background effects - Now uses the Tron Grid CSS */}
-          <div className={`absolute inset-0 tron-grid-bg`}/>
-
-          <div className={`text-center space-y-4 max-w-lg w-full p-4 ${contentVisible ? 'animate-fade-in-content' : 'opacity-0'}`}>
-
-            {/* Main Title: MetaVerse */}
-            <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-widest text-shadow-cyberpunk mb-4 glitch-text" data-text="METAVERSE">
-              METAVERSE
-            </h1>
-            
-            {/* Subtitle 1: Hackathon Name */}
-            <p className="text-2xl font-semibold text-cyan-400 font-sans tracking-wider">
-                24 Hours National Level Hackathon
-            </p>
-
-            {/* Subtitle 2: Tagline */}
-            <p className="text-lg text-gray-400 font-light italic mb-8">
-                Innovation meets Imagination in the Digital Frontier
-            </p>
-
-            {/* Progress Bar */}
-            <div className="relative w-full h-3 bg-gray-900 rounded-full overflow-hidden mx-auto border border-cyan-500 mt-6">
-              <div
-                className="absolute inset-y-0 left-0 bg-cyan-500 rounded-full transition-all duration-300 shadow-cyan-glow"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-
-            {/* Loading Text */}
-            <p className="text-xl text-green-400 font-mono animate-pulse pt-2">
-              {mainLoadingText}
-            </p>
-          </div>
-        </div>
+        {/* The worn-view content (progress bar, text) is completely removed. */}
       </div>
 
       {/* The style block is now managed entirely in global.css */}

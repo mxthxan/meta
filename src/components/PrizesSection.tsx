@@ -4,7 +4,7 @@ const prizes = [
   {
     icon: Trophy,
     title: '1st Prize',
-    amount: '₹10,000',
+    amount: '₹15,000',
     color: 'from-yellow-400 to-orange-500',
     glow: 'shadow-yellow-500/50'
   },
@@ -54,6 +54,7 @@ const benefits = [
 export default function PrizesSection() {
   return (
     <section className="relative py-24 px-4 overflow-hidden">
+      <section id="prizes" className="relative py-24 px-4 overflow-hidden"></section>
       <div className="absolute inset-0">
         <div className="prize-particles" />
       </div>

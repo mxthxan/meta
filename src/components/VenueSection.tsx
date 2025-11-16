@@ -3,6 +3,7 @@ import { MapPin, Calendar, Clock } from 'lucide-react';
 export default function VenueSection() {
   return (
     <section className="relative py-24 px-4 overflow-hidden">
+      <section id="venue" className="relative py-24 px-4 overflow-hidden"></section>
       <div className="absolute inset-0 opacity-10">
         <div className="map-grid" />
       </div>

@@ -85,7 +85,9 @@ const colorMap: Record<string, string> = {
 
 export default function ScheduleSection() {
   return (
+    
     <section className="relative py-24 px-4 overflow-hidden">
+      <section id="schedule" className="relative py-24 px-4 overflow-hidden"></section>
       <div className="absolute inset-0 opacity-10">
         <div className="timeline-grid" />
       </div>

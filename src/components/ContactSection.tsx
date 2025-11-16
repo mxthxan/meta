@@ -3,6 +3,7 @@ import { Phone, Instagram, Users as UsersIcon, Mail } from 'lucide-react';
 export default function ContactSection() {
   return (
     <section className="relative py-24 px-4 overflow-hidden">
+      <section id="contact" className="relative py-24 px-4 overflow-hidden"></section>
       <div className="absolute inset-0">
         <div className="contact-glow" />
       </div>

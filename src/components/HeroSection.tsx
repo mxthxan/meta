@@ -55,6 +55,7 @@ const generateFullMaze = () => {
 };
 
 export default function HeroSection() {
+ 
   const [timeLeft, setTimeLeft] = useState({
     days: 0, hours: 0, minutes: 0, seconds: 0
   });
@@ -193,8 +194,9 @@ export default function HeroSection() {
       return; // Ignore mouse movement outside the section
     }
 
-    const newX = sectionRelativeX;
-    const newY = sectionRelativeY;
+    // Clamp the position to stay within bounds and below navbar offset
+    const newX = Math.max(PACMAN_SIZE, Math.min(sectionRelativeX, rect.width - PACMAN_SIZE));
+    const newY = Math.max(NAVBAR_OFFSET_PX + PACMAN_SIZE, Math.min(sectionRelativeY, rect.height - PACMAN_SIZE));
 
     // Calculate direction based on mouse movement
     const dx = newX - lastMousePosition.current.x;
@@ -258,8 +260,8 @@ export default function HeroSection() {
         let newY = current.y + (dy / dist) * moveSpeed;
         
         // Clamp Pac-Man to the section boundaries (respecting the top offset)
-        newX = Math.max(0, Math.min(newX, sectionWidth));
-        newY = Math.max(NAVBAR_OFFSET_PX, Math.min(newY, sectionHeight)); // 🚀 Clamp bottom y to NAVBAR_OFFSET_PX
+        newX = Math.max(PACMAN_SIZE, Math.min(newX, sectionWidth - PACMAN_SIZE));
+        newY = Math.max(NAVBAR_OFFSET_PX + PACMAN_SIZE, Math.min(newY, sectionHeight - PACMAN_SIZE));
 
         mousePosition.current = { x: newX, y: newY };
 
@@ -370,8 +372,8 @@ export default function HeroSection() {
           }
           
           // Clamp ghost position to the section boundaries (respecting the top offset)
-          newX = Math.max(GHOST_SIZE / 2, Math.min(newX, sectionWidth - GHOST_SIZE / 2));
-          newY = Math.max(NAVBAR_OFFSET_PX, Math.min(newY, sectionHeight - GHOST_SIZE / 2)); // 🚀 Clamp top y to NAVBAR_OFFSET_PX
+          newX = Math.max(GHOST_SIZE, Math.min(newX, sectionWidth - GHOST_SIZE));
+          newY = Math.max(NAVBAR_OFFSET_PX + GHOST_SIZE, Math.min(newY, sectionHeight - GHOST_SIZE));
 
           return {
             ...ghost,
@@ -394,8 +396,8 @@ export default function HeroSection() {
   }, [isMobile]);
 
   return (
-    // Attach the sectionRef to the main section element and use 'relative' for absolute positioning context
-    <section ref={sectionRef} className="hero-section relative min-h-screen flex items-center justify-center overflow-hidden bg-black pt-20">
+    <section id="hero" ref={sectionRef} className="hero-section relative min-h-screen flex items-center justify-center overflow-hidden bg-black pt-20">
+      
       <style>{`
         /* Hide default cursor only within HeroSection */
         .hero-section,
