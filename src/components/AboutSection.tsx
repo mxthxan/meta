@@ -27,12 +27,35 @@ function createInitialSnake(cols: number, rows: number): Cell[] {
   return Array.from({ length: INITIAL_LENGTH }, (_, i) => ({ x: cx - i, y: cy }));
 }
 
+// Detect if device is mobile/tablet
+function isMobileDevice(): boolean {
+  if (typeof window === 'undefined') return false;
+  
+  const mobileDevices = [
+    'iPhone SE', 'iPhone XR', 'iPhone 12 Pro', 'iPhone 14 Pro Max',
+    'Pixel 7', 'Samsung Galaxy S8+', 'Samsung Galaxy S20 Ultra',
+    'iPad Mini', 'iPad Air', 'iPad Pro',
+    'Surface Pro 7', 'Surface Duo', 'Galaxy Z Fold 5'
+  ];
+  
+  const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+  
+  // Check if matches any known mobile device pattern
+  const isMobileUA = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini|mobile|tablet/i.test(userAgent);
+  
+  // Check screen size as fallback
+  const isMobileScreen = window.innerWidth <= 1024;
+  
+  return isMobileUA || isMobileScreen;
+}
+
 export default function AboutSection() {
   const [snake, setSnake] = useState<Cell[]>(() => createInitialSnake(COLS, ROWS));
   const [apples, setApples] = useState<Cell[]>(() => [randomApple(createInitialSnake(COLS, ROWS), COLS, ROWS)]);
   const [running, setRunning] = useState(false);
   const [snakeExited, setSnakeExited] = useState(false);
   const [score, setScore] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Ref for mutable state (allows reading current values inside setInterval/keydown)
   const snakeRef = useRef(snake);
@@ -41,6 +64,18 @@ export default function AboutSection() {
   const snakeExitedRef = useRef(snakeExited);
   const applesRef = useRef(apples);
   const scoreRef = useRef(score);
+
+  // Detect mobile device on mount
+  useEffect(() => {
+    setIsMobile(isMobileDevice());
+    
+    const handleResize = () => {
+      setIsMobile(isMobileDevice());
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Keep refs synchronized with state
   useEffect(() => { snakeRef.current = snake; }, [snake]);
@@ -522,11 +557,11 @@ export default function AboutSection() {
           </h2>
           <div className="w-32 h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent mx-auto" />
 
-          {/* --- MOVED WASD INSTRUCTION BOX HERE --- */}
-          {/* Absolutely positioned below the header and centered, only visible when game hasn't started */}
-          {!snakeExited && (
+          {/* --- WASD INSTRUCTION BOX --- */}
+          {/* Only visible on desktop devices when game hasn't started */}
+          {!snakeExited && !isMobile && (
             <div 
-              className="absolute top-full mt-4 left-1/2 transform -translate-x-1/2 z-50 pointer-events-auto **hidden md:block**"
+              className="absolute top-full mt-4 left-1/2 transform -translate-x-1/2 z-50 pointer-events-auto"
             >
               <div style={{
                 background: 'linear-gradient(135deg, rgba(6,182,212,0.95), rgba(168,85,247,0.95))',
@@ -544,7 +579,7 @@ export default function AboutSection() {
               </div>
             </div>
           )}
-          {/* --- END MOVED INSTRUCTION BOX --- */}
+          {/* --- END INSTRUCTION BOX --- */}
         </div>
         
         <div className="holographic-card p-8 md:p-12 backdrop-blur-xl">

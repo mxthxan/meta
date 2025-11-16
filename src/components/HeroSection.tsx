@@ -321,11 +321,11 @@ export default function HeroSection() {
             // Mobile: Ghost uses random targets within the section (respecting offset)
             if (!ghostRandomTargetsRef.current[ghost.id] || 
                 ghostRandomTargetsRef.current[ghost.id].x < 0 || ghostRandomTargetsRef.current[ghost.id].x > sectionWidth ||
-                ghostRandomTargetsRef.current[ghost.id].y < NAVBAR_OFFSET_PX || ghostRandomTargetsRef.current[ghost.id].y > sectionHeight) { // 🚀 Check offset
+                ghostRandomTargetsRef.current[ghost.id].y < NAVBAR_OFFSET_PX || ghostRandomTargetsRef.current[ghost.id].y > sectionHeight) {
                 
               ghostRandomTargetsRef.current[ghost.id] = {
                 x: Math.random() * sectionWidth,
-                y: Math.random() * (sectionHeight - NAVBAR_OFFSET_PX) + NAVBAR_OFFSET_PX // 🚀 Generate target below offset
+                y: Math.random() * (sectionHeight - NAVBAR_OFFSET_PX) + NAVBAR_OFFSET_PX
               };
             }
 
@@ -338,7 +338,7 @@ export default function HeroSection() {
             if (dist < 50) {
               ghostRandomTargetsRef.current[ghost.id] = {
                 x: Math.random() * sectionWidth,
-                y: Math.random() * (sectionHeight - NAVBAR_OFFSET_PX) + NAVBAR_OFFSET_PX // 🚀 Generate target below offset
+                y: Math.random() * (sectionHeight - NAVBAR_OFFSET_PX) + NAVBAR_OFFSET_PX
               };
             }
 
@@ -396,8 +396,19 @@ export default function HeroSection() {
   }, [isMobile]);
 
   return (
-    <section id="hero" ref={sectionRef} className="hero-section relative min-h-screen flex items-center justify-center overflow-hidden bg-black pt-20">
+    <section id="hero" ref={sectionRef} className="hero-section relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-black">
       
+      {/* Banner Image - Positioned below navbar */}
+      <div className="w-full z-30 px-4 pt-20 pb-8">
+        <div className="max-w-6xl mx-auto rounded-xl overflow-hidden border border-cyan-500/30 shadow-lg hover:shadow-cyan-500/50 transition-shadow duration-300">
+          <img 
+            src="https://ik.imagekit.io/jacw2jgvs/Screenshot%202025-11-16%20145445.png" 
+            alt="MetaVerse Hackathon Banner" 
+            className="w-full h-auto object-cover hover:scale-105 transition-transform duration-300"
+          />
+        </div>
+      </div>
+
       <style>{`
         /* Hide default cursor only within HeroSection */
         .hero-section,
@@ -433,7 +444,6 @@ export default function HeroSection() {
         }
         
         .pac-man-cursor {
-          /* FIX: Changed from fixed to absolute to confine it to the HeroSection */
           position: absolute; 
           width: ${PACMAN_SIZE}px;
           height: ${PACMAN_SIZE}px;
@@ -459,7 +469,6 @@ export default function HeroSection() {
 
         /* Ghost Style */
         .ghost {
-          /* FIX: Changed from fixed to absolute to confine it to the HeroSection */
           position: absolute; 
           width: ${GHOST_SIZE}px;
           height: ${GHOST_SIZE}px;
@@ -561,8 +570,7 @@ export default function HeroSection() {
         }
       `}</style>
 
-
-      {/* Pellets and Ghosts Container (absolute positioning is inherited from the section) */}
+      {/* Pellets and Ghosts Container */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {pellets.map(pellet => (
           <div
@@ -575,7 +583,7 @@ export default function HeroSection() {
           />
         ))}
 
-        {/* Ghosts chasing the cursor - Position is now absolute relative to the section */}
+        {/* Ghosts chasing the cursor */}
         {ghosts.map(ghost => (
           <div
             key={ghost.id}
@@ -595,7 +603,7 @@ export default function HeroSection() {
         ))}
       </div>
 
-      {/* Pac-Man Cursor - Position is now absolute relative to the section */}
+      {/* Pac-Man Cursor */}
       <div
         className="pac-man-cursor"
         style={{
@@ -606,7 +614,7 @@ export default function HeroSection() {
       />
 
       {/* Foreground Content */}
-      <div className="relative z-20 text-center px-4 max-w-6xl mx-auto">
+      <div className="relative z-20 flex-1 text-center px-4 max-w-6xl mx-auto flex items-center justify-center">
         <div className="space-y-8">
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold leading-tight">
             <span className="block text-3d">MetaVerse</span>
