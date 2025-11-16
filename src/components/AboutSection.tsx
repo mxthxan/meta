@@ -525,7 +525,9 @@ export default function AboutSection() {
           {/* --- MOVED WASD INSTRUCTION BOX HERE --- */}
           {/* Absolutely positioned below the header and centered, only visible when game hasn't started */}
           {!snakeExited && (
-            <div className="absolute top-full mt-4 left-1/2 transform -translate-x-1/2 z-50 pointer-events-auto">
+            <div 
+              className="absolute top-full mt-4 left-1/2 transform -translate-x-1/2 z-50 pointer-events-auto **hidden md:block**"
+            >
               <div style={{
                 background: 'linear-gradient(135deg, rgba(6,182,212,0.95), rgba(168,85,247,0.95))',
                 color: '#fff',
