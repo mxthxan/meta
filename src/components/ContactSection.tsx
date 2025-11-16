@@ -28,15 +28,15 @@ export default function ContactSection() {
                 <Phone className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-cyan-300">Coordinator Name 1</h3>
+                <h3 className="text-2xl font-bold text-cyan-300">Shahid Sharif B</h3>
                 <p className="text-gray-400 text-sm">Role/Title</p>
               </div>
             </div>
             <a
-              href="tel:+91XXXXXXXXXX"
+              href="tel:+91 7397 234 549"
               className="text-3xl font-bold text-white hover:text-cyan-400 transition-colors block mb-2"
             >
-              +91 XXXXXXXXXX
+              +91 7397 234 549
             </a>
             <p className="text-gray-400">Description/Responsibilities</p>
           </div>
@@ -48,15 +48,15 @@ export default function ContactSection() {
                 <Phone className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-cyan-300">Coordinator Name 2</h3>
+                <h3 className="text-2xl font-bold text-cyan-300">Shrivarsa P</h3>
                 <p className="text-gray-400 text-sm">Role/Title</p>
               </div>
             </div>
             <a
-              href="tel:+91XXXXXXXXXX"
+              href="tel:+919840223769"
               className="text-3xl font-bold text-white hover:text-cyan-400 transition-colors block mb-2"
             >
-              +91 XXXXXXXXXX
+              +91 9840223769
             </a>
             <p className="text-gray-400">Description/Responsibilities</p>
           </div>
@@ -68,15 +68,15 @@ export default function ContactSection() {
                 <Phone className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-cyan-300">Coordinator Name 3</h3>
+                <h3 className="text-2xl font-bold text-cyan-300">Sham K A </h3>
                 <p className="text-gray-400 text-sm">Role/Title</p>
               </div>
             </div>
             <a
-              href="tel:+91XXXXXXXXXX"
+              href="tel:+919566472012"
               className="text-3xl font-bold text-white hover:text-cyan-400 transition-colors block mb-2"
             >
-              +91 XXXXXXXXXX
+              +91 9566472012
             </a>
             <p className="text-gray-400">Description/Responsibilities</p>
           </div>
@@ -88,15 +88,15 @@ export default function ContactSection() {
                 <Phone className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-cyan-300">Coordinator Name 4</h3>
+                <h3 className="text-2xl font-bold text-cyan-300">Mithran </h3>
                 <p className="text-gray-400 text-sm">Role/Title</p>
               </div>
             </div>
             <a
-              href="tel:+91XXXXXXXXXX"
+              href="tel:+917358651427"
               className="text-3xl font-bold text-white hover:text-cyan-400 transition-colors block mb-2"
             >
-              +91 XXXXXXXXXX
+              +91 7358651427
             </a>
             <p className="text-gray-400">Description/Responsibilities</p>
           </div>
@@ -108,7 +108,7 @@ export default function ContactSection() {
                 <Phone className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-cyan-300">Coordinator Name 5</h3>
+                <h3 className="text-2xl font-bold text-cyan-300">Yogesh R</h3>
                 <p className="text-gray-400 text-sm">Role/Title</p>
               </div>
             </div>
