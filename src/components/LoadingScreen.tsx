@@ -81,6 +81,13 @@ export default function LoadingScreen({ onComplete }: LoadingScreenProps) {
 
   return (
     <>
+      {/* Mobile-only Banner - Visible only on mobile screens */}
+      <div className="fixed top-0 left-0 right-0 md:hidden z-[60] bg-black bg-opacity-70 px-4 py-3 text-center backdrop-blur-sm">
+        <p className="text-white font-medium text-xs">
+          For the best experience, use desktop or large screen devices
+        </p>
+      </div>
+
       {/* The main container is shown only until the 'complete' phase. */}
       <div 
         className={`fixed inset-0 z-50 bg-black overflow-hidden flex items-center justify-center 
