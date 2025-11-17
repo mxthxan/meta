@@ -177,48 +177,64 @@ export default function Sponsors() {
           </button>
 
           {/* Infinite Scrollable Content */}
-          <div
-            ref={scrollContainerRef}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-            onMouseLeave={handleMouseLeave}
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-            className="sponsors-container flex gap-8 overflow-x-auto py-12 px-8 select-none"
-            style={{
-              cursor: isDragging ? 'grabbing' : 'grab',
-              scrollBehavior: 'smooth'
-            }}
-          >
-            {/* Infinite loop: 3 copies of sponsors for seamless scrolling */}
-            {[...Array(3)].map((_, setIndex) =>
-              sponsorsData.map((sponsor, index) => {
-                const Icon = sponsor.icon;
-                const uniqueKey = `${setIndex}-${index}`;
-                
-                return (
-                  <div
-                    key={uniqueKey}
-                    className="flex flex-col items-center justify-center px-8 py-8 flex-shrink-0 group/sponsor hover:scale-110 transition-all duration-300 ease-out"
-                  >
-                    {/* Glow effect on hover */}
-                    <div className="absolute -inset-8 bg-gradient-to-r from-cyan-500/0 via-purple-500/0 to-pink-500/0 group-hover/sponsor:from-cyan-500/20 group-hover/sponsor:via-purple-500/20 group-hover/sponsor:to-pink-500/20 rounded-full blur-xl opacity-0 group-hover/sponsor:opacity-100 transition-all duration-300 -z-10" />
-                    
+          <div className="relative">
+            {/* Blur Overlay with Text */}
+            <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/30 via-purple-500/30 to-pink-500/30 blur-3xl" />
+                <div className="relative bg-black/80 backdrop-blur-md px-12 py-6 rounded-2xl border border-cyan-500/30 shadow-2xl">
+                  <h3 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent text-center whitespace-nowrap">
+                    To be unveiled soon
+                  </h3>
+                  <div className="w-full h-1 bg-gradient-to-r from-transparent to-transparent mt-3" />
+                </div>
+              </div>
+            </div>
+
+            {/* Blurred Content */}
+            <div
+              ref={scrollContainerRef}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseLeave}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              className="sponsors-container flex gap-8 overflow-x-auto py-12 px-8 select-none blur-sm"
+              style={{
+                cursor: isDragging ? 'grabbing' : 'grab',
+                scrollBehavior: 'smooth'
+              }}
+            >
+              {/* Infinite loop: 3 copies of sponsors for seamless scrolling */}
+              {[...Array(3)].map((_, setIndex) =>
+                sponsorsData.map((sponsor, index) => {
+                  const Icon = sponsor.icon;
+                  const uniqueKey = `${setIndex}-${index}`;
+                  
+                  return (
                     <div
-                      className={`w-28 h-28 rounded-full bg-gradient-to-br ${sponsor.color} flex items-center justify-center mb-4 shadow-xl group-hover/sponsor:shadow-2xl group-hover/sponsor:shadow-cyan-500/50 transition-all duration-300 transform group-hover/sponsor:scale-110`}
+                      key={uniqueKey}
+                      className="flex flex-col items-center justify-center px-8 py-8 flex-shrink-0 group/sponsor hover:scale-110 transition-all duration-300 ease-out"
                     >
-                      <Icon className="w-14 h-14 text-white" />
+                      {/* Glow effect on hover */}
+                      <div className="absolute -inset-8 bg-gradient-to-r from-cyan-500/0 via-purple-500/0 to-pink-500/0 group-hover/sponsor:from-cyan-500/20 group-hover/sponsor:via-purple-500/20 group-hover/sponsor:to-pink-500/20 rounded-full blur-xl opacity-0 group-hover/sponsor:opacity-100 transition-all duration-300 -z-10" />
+                      
+                      <div
+                        className={`w-28 h-28 rounded-full bg-gradient-to-br ${sponsor.color} flex items-center justify-center mb-4 shadow-xl group-hover/sponsor:shadow-2xl group-hover/sponsor:shadow-cyan-500/50 transition-all duration-300 transform group-hover/sponsor:scale-110`}
+                      >
+                        <Icon className="w-14 h-14 text-white" />
+                      </div>
+                      <h3 className="text-lg md:text-xl font-bold text-white whitespace-nowrap text-center">
+                        {sponsor.company}
+                      </h3>
+                      <div className="w-12 h-1 bg-gradient-to-r from-cyan-500 to-purple-600 mt-3 opacity-0 group-hover/sponsor:opacity-100 transition-opacity duration-300" />
                     </div>
-                    <h3 className="text-lg md:text-xl font-bold text-white whitespace-nowrap text-center">
-                      {sponsor.company}
-                    </h3>
-                    <div className="w-12 h-1 bg-gradient-to-r from-cyan-500 to-purple-600 mt-3 opacity-0 group-hover/sponsor:opacity-100 transition-opacity duration-300" />
-                  </div>
-                );
-              })
-            )}
+                  );
+                })
+              )}
+            </div>
           </div>
 
           {/* Infinite scroll indicator */}
@@ -240,7 +256,7 @@ export default function Sponsors() {
             Thank you to our amazing sponsors for making this event possible
           </p>
           <p className="text-sm text-gray-400 flex items-center justify-center gap-2">
-            <span>👆</span> Drag with mouse or swipe on touch devices • Scroll continuously
+            <span></span> 
           </p>
         </div>
       </div>

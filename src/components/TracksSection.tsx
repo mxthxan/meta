@@ -242,7 +242,7 @@ const tracks = [
     },
     {
         icon: Code,
-        title: 'Development Tools',
+        title: 'Developer Tools',
         description: 'Craft next-gen tools that empower developers and enhance productivity',
         color: 'from-green-500 to-teal-600'
     },
