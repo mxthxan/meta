@@ -129,7 +129,7 @@ export default function Sponsors() {
   };
 
   return (
-    <section id="sponsors" className="relative py-24 px-4 overflow-hidden bg-black hidden lg:block">
+    <section id="sponsors" className="relative py-24 px-4 overflow-hidden bg-black">
       <style>{`
         /* Hide scrollbar */
         .sponsors-container::-webkit-scrollbar {
@@ -184,9 +184,9 @@ export default function Sponsors() {
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/30 via-purple-500/30 to-pink-500/30 blur-3xl" />
                 <div className="relative bg-black/80 backdrop-blur-md px-12 py-6 rounded-2xl border border-cyan-500/30 shadow-2xl">
                   <h3 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent text-center whitespace-nowrap">
-                    Will be unveiled soon
+                    To be unveiled soon
                   </h3>
-                  <div className="w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent mt-3" />
+                  <div className="w-full h-1 bg-gradient-to-r from-transparent to-transparent mt-3" />
                 </div>
               </div>
             </div>
