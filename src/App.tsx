@@ -5,7 +5,6 @@ import HeroSection from './components/HeroSection';
 import AboutSection from './components/AboutSection';
 import TracksSection from './components/TracksSection';
 import IndustryChallenges from './components/IndustryChallenges';
-import ScheduleSection from './components/ScheduleSection';
 import PrizesSection from './components/PrizesSection';
 import VenueSection from './components/VenueSection';
 import ContactSection from './components/ContactSection';
@@ -24,7 +23,6 @@ function App() {
       <AboutSection />
       <TracksSection />
       <IndustryChallenges />
-      <ScheduleSection />
       <PrizesSection />
       <VenueSection />
       <ContactSection />

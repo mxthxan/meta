@@ -28,7 +28,7 @@ export default function Sponsors() {
   const duplicatedSponsors = [...sponsors, ...sponsors, ...sponsors];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900">
       <section className="relative py-24 px-4 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-purple-500/20 to-pink-500/20" />
