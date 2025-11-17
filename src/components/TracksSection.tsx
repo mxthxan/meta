@@ -321,9 +321,10 @@ export default function TracksSection() {
                     <p className="text-xl text-cyan-400 glow-text">
                         Choose your domain and shape the future
                     </p>
-                    <p className="text-sm text-gray-400 mt-4">
-                        Press ← or → arrow keys to activate secret game mode
-                    </p>
+                    <p className="text-xl md:text-2xl font-semibold text-purple-300 mt-4 animate-pulse drop-shadow-[0_0_6px_rgba(168,85,247,0.7)]">
+    Press ← or → arrow keys to unlock Secret Game Mode
+</p>
+
                     <div className="w-32 h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent mx-auto mt-6" />
                 </div>
 

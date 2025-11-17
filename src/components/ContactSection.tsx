@@ -27,14 +27,14 @@ export default function ContactSection() {
               <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-cyan-500 glow-icon mx-auto bg-gray-800">
                 {/* Replace src with your ImageKit URL */}
                 <img 
-                  src="https://via.placeholder.com/160" 
+                  src="https://ik.imagekit.io/jacw2jgvs/Screenshot%202025-11-17%20114644.png" 
                   alt="Shahid Sharif B"
                   className="w-full h-full object-cover"
                 />
               </div>
             </div>
             <h3 className="text-2xl font-bold text-cyan-300 mb-1">Shahid Sharif B</h3>
-            <p className="text-gray-400 text-sm mb-2">Role/Title</p>
+            <p className="text-gray-400 text-sm mb-2"></p>
             <a
               href="tel:+917397234549"
               className="text-lg font-semibold text-white hover:text-cyan-400 transition-colors"
@@ -49,14 +49,14 @@ export default function ContactSection() {
               <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-purple-500 glow-icon mx-auto bg-gray-800">
                 {/* Replace src with your ImageKit URL */}
                 <img 
-                  src="https://via.placeholder.com/160" 
+                  src="https://ik.imagekit.io/jacw2jgvs/Screenshot%202025-11-17%20115748.png" 
                   alt="Shrivarsa P"
                   className="w-full h-full object-cover"
                 />
               </div>
             </div>
             <h3 className="text-2xl font-bold text-cyan-300 mb-1">Shrivarsa P</h3>
-            <p className="text-gray-400 text-sm mb-2">Role/Title</p>
+            <p className="text-gray-400 text-sm mb-2"></p>
             <a
               href="tel:+919840223769"
               className="text-lg font-semibold text-white hover:text-cyan-400 transition-colors"
@@ -71,14 +71,14 @@ export default function ContactSection() {
               <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-green-500 glow-icon mx-auto bg-gray-800">
                 {/* Replace src with your ImageKit URL */}
                 <img 
-                  src="https://via.placeholder.com/160" 
+                  src="https://ik.imagekit.io/jacw2jgvs/Screenshot%202025-11-17%20115940.png" 
                   alt="Sham K A"
                   className="w-full h-full object-cover"
                 />
               </div>
             </div>
             <h3 className="text-2xl font-bold text-cyan-300 mb-1">Sham K A</h3>
-            <p className="text-gray-400 text-sm mb-2">Role/Title</p>
+            <p className="text-gray-400 text-sm mb-2"></p>
             <a
               href="tel:+919566472012"
               className="text-lg font-semibold text-white hover:text-cyan-400 transition-colors"
@@ -103,7 +103,7 @@ export default function ContactSection() {
               </div>
             </div>
             <h3 className="text-2xl font-bold text-cyan-300 mb-1">Mithran</h3>
-            <p className="text-gray-400 text-sm mb-2">Role/Title</p>
+            <p className="text-gray-400 text-sm mb-2"></p>
             <a
               href="tel:+917358651427"
               className="text-lg font-semibold text-white hover:text-cyan-400 transition-colors"
@@ -118,19 +118,19 @@ export default function ContactSection() {
               <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-yellow-500 glow-icon mx-auto bg-gray-800">
                 {/* Replace src with your ImageKit URL */}
                 <img 
-                  src="https://via.placeholder.com/160" 
+                  src="https://ik.imagekit.io/jacw2jgvs/1732378724803.jpg" 
                   alt="Yogesh R"
                   className="w-full h-full object-cover"
                 />
               </div>
             </div>
             <h3 className="text-2xl font-bold text-cyan-300 mb-1">Yogesh R</h3>
-            <p className="text-gray-400 text-sm mb-2">Role/Title</p>
+            <p className="text-gray-400 text-sm mb-2"></p>
             <a
-              href="tel:+91XXXXXXXXXX"
+              href="tel:+91 90806 60903"
               className="text-lg font-semibold text-white hover:text-cyan-400 transition-colors"
             >
-              +91 XXXXXXXXXX
+              +91 90806 60903
             </a>
           </div>
         </div>
