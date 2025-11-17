@@ -1,363 +1,265 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Cpu, Blocks, Code, Wifi, Sparkles } from 'lucide-react';
+import { Building2, Rocket, Zap, Globe, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useRef, useState, useEffect } from 'react';
 
-// --- GALAXIA GAME IMPLEMENTATION ---
-
-// Constants for the Game
-const PLAYER_SPEED = 7;
-const BULLET_SPEED = 12;
-const ENEMY_SPEED = 2;
-const ENEMY_SPAWN_INTERVAL = 2000; // ms
-const ENEMY_SIZE = 30;
-
-// Game State Object (to be managed by component state/refs)
-let gameState = {
-    player: { x: 0, y: 0, size: 25 },
-    bullets: [],
-    enemies: [],
-    input: { left: false, right: false, space: false },
-    gameLoopId: null,
-    lastEnemySpawn: 0,
-};
-
-const GalaxiaGame = ({ onGameOver }) => {
-    const canvasRef = useRef(null);
-    const gameContainerRef = useRef(null);
-    const [score, setScore] = useState(0);
-
-    // --- Core Game Loop Logic ---
-    const update = (ctx, canvas, currentTime) => {
-        // 1. CLEAR SCREEN
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Draw stars background
-        ctx.fillStyle = '#FFFFFF';
-        for (let i = 0; i < 50; i++) {
-            const x = (i * 137.5) % canvas.width;
-            const y = (i * 234.7 + currentTime * 0.05) % canvas.height;
-            ctx.fillRect(x, y, 2, 2);
-        }
-
-        // 2. INPUT & PLAYER MOVEMENT (Left/Right only)
-        const p = gameState.player;
-        if (gameState.input.left) p.x -= PLAYER_SPEED;
-        if (gameState.input.right) p.x += PLAYER_SPEED;
-
-        // Clamp player position within screen bounds
-        p.x = Math.max(0, Math.min(canvas.width - p.size, p.x));
-
-        // 3. SPAWN ENEMIES
-        if (currentTime - gameState.lastEnemySpawn > ENEMY_SPAWN_INTERVAL) {
-            gameState.enemies.push({
-                x: Math.random() * (canvas.width - ENEMY_SIZE),
-                y: -ENEMY_SIZE,
-                size: ENEMY_SIZE,
-                health: 1
-            });
-            gameState.lastEnemySpawn = currentTime;
-        }
-
-        // 4. MOVE ENEMIES
-        gameState.enemies = gameState.enemies
-            .map(enemy => ({ ...enemy, y: enemy.y + ENEMY_SPEED }))
-            .filter(enemy => enemy.y < canvas.height + ENEMY_SIZE && enemy.health > 0);
-
-        // 5. BULLET LOGIC
-        gameState.bullets = gameState.bullets
-            .map(bullet => ({ ...bullet, y: bullet.y - BULLET_SPEED }))
-            .filter(bullet => bullet.y > -10);
-
-        // 6. COLLISION DETECTION
-        gameState.bullets.forEach(bullet => {
-            gameState.enemies.forEach(enemy => {
-                if (enemy.health > 0 &&
-                    bullet.x > enemy.x && bullet.x < enemy.x + enemy.size &&
-                    bullet.y > enemy.y && bullet.y < enemy.y + enemy.size) {
-                    enemy.health = 0;
-                    bullet.y = -100; // Remove bullet
-                    setScore(s => s + 100);
-                }
-            });
-        });
-
-        // Check if enemies hit player (game over condition)
-        gameState.enemies.forEach(enemy => {
-            if (enemy.health > 0 &&
-                enemy.y + enemy.size > p.y &&
-                enemy.x < p.x + p.size &&
-                enemy.x + enemy.size > p.x &&
-                enemy.y < p.y + p.size) {
-                onGameOver();
-            }
-        });
-        
-        // 7. DRAWING
-        // Draw Player (spaceship shape)
-        ctx.fillStyle = '#00FFFF';
-        ctx.shadowColor = '#00FFFF';
-        ctx.shadowBlur = 15;
-        ctx.beginPath();
-        ctx.moveTo(p.x + p.size / 2, p.y); // Top point
-        ctx.lineTo(p.x, p.y + p.size); // Bottom left
-        ctx.lineTo(p.x + p.size / 2, p.y + p.size * 0.7); // Middle bottom
-        ctx.lineTo(p.x + p.size, p.y + p.size); // Bottom right
-        ctx.closePath();
-        ctx.fill();
-        ctx.shadowBlur = 0;
-
-        // Draw Enemies (invader style)
-        gameState.enemies.forEach(enemy => {
-            if (enemy.health > 0) {
-                ctx.fillStyle = '#FF0066';
-                ctx.shadowColor = '#FF0066';
-                ctx.shadowBlur = 10;
-                ctx.fillRect(enemy.x, enemy.y, enemy.size, enemy.size * 0.7);
-                ctx.fillRect(enemy.x + 5, enemy.y + enemy.size * 0.3, 5, 5);
-                ctx.fillRect(enemy.x + enemy.size - 10, enemy.y + enemy.size * 0.3, 5, 5);
-            }
-        });
-        ctx.shadowBlur = 0;
-
-        // Draw Bullets (energy beams)
-        ctx.fillStyle = '#00FF00';
-        ctx.shadowColor = '#00FF00';
-        ctx.shadowBlur = 8;
-        gameState.bullets.forEach(bullet => {
-            ctx.fillRect(bullet.x - 2, bullet.y, 4, 15);
-        });
-        ctx.shadowBlur = 0;
-
-        // 8. RENDER SCORE
-        ctx.fillStyle = '#FFFFFF';
-        ctx.font = 'bold 24px monospace';
-        ctx.fillText(`SCORE: ${score}`, 20, 40);
-        ctx.font = '16px monospace';
-        ctx.fillText(`ENEMIES: ${gameState.enemies.filter(e => e.health > 0).length}`, 20, 70);
-    };
-
-    // The Game Loop using requestAnimationFrame
-    const gameLoop = (currentTime) => {
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext('2d');
-        update(ctx, canvas, currentTime);
-        gameState.gameLoopId = requestAnimationFrame(gameLoop);
-    };
-
-    // --- Effect for Setup, Input, and Cleanup ---
-    useEffect(() => {
-        const canvas = canvasRef.current;
-        const container = gameContainerRef.current;
-
-        // Initialize Canvas Size and Player Position
-        canvas.width = container.clientWidth;
-        canvas.height = container.clientHeight;
-        gameState.player.x = canvas.width / 2 - gameState.player.size / 2;
-        gameState.player.y = canvas.height - gameState.player.size * 3;
-        gameState.enemies = [];
-        gameState.bullets = [];
-        gameState.lastEnemySpawn = performance.now();
-
-        // Input Handlers - Arrow Keys, Space, and ESC
-        const handleKeyDown = (e) => {
-            const key = e.key;
-            if (key === 'ArrowLeft') {
-                e.preventDefault();
-                gameState.input.left = true;
-            } else if (key === 'ArrowRight') {
-                e.preventDefault();
-                gameState.input.right = true;
-            } else if (key === ' ' && !gameState.input.space) {
-                e.preventDefault();
-                gameState.input.space = true;
-                gameState.bullets.push({
-                    x: gameState.player.x + gameState.player.size / 2,
-                    y: gameState.player.y,
-                });
-            } else if (key === 'Escape') {
-                e.preventDefault();
-                onGameOver();
-            }
-        };
-
-        const handleKeyUp = (e) => {
-            const key = e.key;
-            if (key === 'ArrowLeft') {
-                e.preventDefault();
-                gameState.input.left = false;
-            } else if (key === 'ArrowRight') {
-                e.preventDefault();
-                gameState.input.right = false;
-            } else if (key === ' ') {
-                e.preventDefault();
-                gameState.input.space = false;
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        window.addEventListener('keyup', handleKeyUp);
-
-        // Start the Game Loop
-        gameLoop();
-
-        // Cleanup function
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-            window.removeEventListener('keyup', handleKeyUp);
-            cancelAnimationFrame(gameState.gameLoopId); // Stop the loop
-        };
-    }, []);
-
-    // ---------------------------------------------
-
-    return (
-        <div ref={gameContainerRef} className="galaxia-game-container w-full h-screen bg-black relative">
-            <canvas ref={canvasRef} className="block" />
-
-            {/* Instructions */}
-            <div className="absolute top-4 left-4 text-white text-sm z-50 bg-black bg-opacity-50 p-4 rounded-lg">
-                <div className="font-bold mb-2">CONTROLS:</div>
-                <div>← → Arrow Keys: Move</div>
-                <div>SPACEBAR: Fire Beam</div>
-                <div>ESC: Exit Game</div>
-            </div>
-        </div>
-    );
-};
-
-// --- ORIGINAL TRACKS SECTION COMPONENT ---
-
-const tracks = [
-    {
-        icon: Cpu,
-        title: 'Smart Cities & Technology',
-        description: 'Build intelligent urban solutions powered by IoT, AI, and data analytics',
-        color: 'from-cyan-500 to-blue-600'
-    },
-    {
-        icon: Blocks,
-        title: 'Blockchain Development',
-        description: 'Create decentralized applications and explore Web3 innovations',
-        color: 'from-purple-500 to-pink-600'
-    },
-    {
-        icon: Code,
-        title: 'Developer Tools',
-        description: 'Craft next-gen tools that empower developers and enhance productivity',
-        color: 'from-green-500 to-teal-600'
-    },
-    {
-        icon: Wifi,
-        title: 'IoT & Smart Systems',
-        description: 'Design connected ecosystems that transform everyday interactions',
-        color: 'from-orange-500 to-red-600'
-    },
-    {
-        icon: Sparkles,
-        title: 'Generative AI & Tools',
-        description: 'Harness the power of AI to create intelligent, adaptive solutions',
-        color: 'from-pink-500 to-purple-600'
-    }
+const sponsorsData = [
+  {
+    icon: Building2,
+    company: 'Tech Corp',
+    color: 'from-cyan-500 to-blue-600'
+  },
+  {
+    icon: Rocket,
+    company: 'InnovateLabs',
+    color: 'from-purple-500 to-pink-600'
+  },
+  {
+    icon: Zap,
+    company: 'FutureTech',
+    color: 'from-green-500 to-teal-600'
+  },
+  {
+    icon: Globe,
+    company: 'MetaSolutions',
+    color: 'from-orange-500 to-red-600'
+  }
 ];
 
-export default function TracksSection() {
-    const [isGameActive, setIsGameActive] = useState(false);
+export default function Sponsors() {
+  const scrollContainerRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState(0);
+  const [scrollStart, setScrollStart] = useState(0);
+  const [scrollPosition, setScrollPosition] = useState(0);
 
-    const handleGameOver = useCallback(() => {
-        setIsGameActive(false);
-    }, []);
+  // Infinite scroll setup
+  const sponsorCount = sponsorsData.length;
+  const itemWidth = 280; // Width of each sponsor card + gap
+  const totalScrollWidth = itemWidth * sponsorCount;
 
-    // 1. Arrow Key Listener to START the game
-    useEffect(() => {
-        if (isGameActive) return;
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
 
-        const handleKeyDown = (event) => {
-            const key = event.key;
-            if (key === 'ArrowLeft' || key === 'ArrowRight') {
-                event.preventDefault();
-                console.log('Arrow key pressed! Activating Galaxia Game.');
-                setIsGameActive(true);
-            }
-        };
+    // Start from middle position for infinite scroll illusion
+    const startPosition = totalScrollWidth;
+    container.scrollLeft = startPosition;
+    setScrollPosition(startPosition);
 
-        window.addEventListener('keydown', handleKeyDown);
+    // Handle infinite scroll
+    const handleScroll = () => {
+      const scroll = container.scrollLeft;
+      
+      // Reset to middle when reaching end
+      if (scroll >= totalScrollWidth * 2) {
+        container.scrollLeft = totalScrollWidth;
+        setScrollPosition(totalScrollWidth);
+      }
+      // Reset to middle when scrolling too far left
+      else if (scroll <= 0) {
+        container.scrollLeft = totalScrollWidth;
+        setScrollPosition(totalScrollWidth);
+      } else {
+        setScrollPosition(scroll);
+      }
+    };
 
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, [isGameActive]);
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [totalScrollWidth, sponsorCount]);
 
-    // 2. Body Class Toggler for full-screen override
-    useEffect(() => {
-        if (isGameActive) {
-            document.body.classList.add('game-active');
-        } else {
-            document.body.classList.remove('game-active');
+  // Mouse drag handlers
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    setDragStart(e.clientX);
+    setScrollStart(scrollContainerRef.current?.scrollLeft || 0);
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const diff = e.clientX - dragStart;
+    container.scrollLeft = scrollStart - diff;
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+  };
+
+  // Touch handlers
+  const handleTouchStart = (e) => {
+    setIsDragging(true);
+    setDragStart(e.touches[0].clientX);
+    setScrollStart(scrollContainerRef.current?.scrollLeft || 0);
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging) return;
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const diff = e.touches[0].clientX - dragStart;
+    container.scrollLeft = scrollStart - diff;
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
+  // Button scroll handlers with inertia
+  const scroll = (direction) => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const scrollAmount = 350;
+    const targetScroll =
+      direction === 'left'
+        ? container.scrollLeft - scrollAmount
+        : container.scrollLeft + scrollAmount;
+
+    container.scrollTo({
+      left: targetScroll,
+      behavior: 'smooth'
+    });
+  };
+
+  return (
+    <section id="sponsors" className="relative py-24 px-4 overflow-hidden bg-black hidden lg:block">
+      <style>{`
+        /* Hide scrollbar */
+        .sponsors-container::-webkit-scrollbar {
+          display: none;
         }
-        return () => {
-            document.body.classList.remove('game-active');
-        };
-    }, [isGameActive]);
+        .sponsors-container {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
 
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-purple-500/20 to-pink-500/20" />
+      </div>
 
-    // RENDER LOGIC
-    if (isGameActive) {
-        return <GalaxiaGame onGameOver={handleGameOver} />;
-    }
+      <div className="relative z-10 max-w-7xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-6">
+            Our Sponsors
+          </h2>
+          <p className="text-xl text-cyan-400 glow-text">
+            Powered by industry leaders
+          </p>
+          <div className="w-32 h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent mx-auto mt-6" />
+        </div>
 
-    // Game is inactive: render the original TracksSection content
-    return (
-        <section className="relative py-24 px-4 overflow-hidden">
-            <section id="tracks" className="relative py-24 px-4 overflow-hidden"></section>
-            <div className="absolute inset-0">
-                <div className="hologram-particles-bg" />
+        {/* Scrollable Container with Navigation */}
+        <div className="relative group">
+          {/* Left Navigation Button */}
+          <button
+            onClick={() => scroll('left')}
+            className="absolute -left-6 md:left-0 top-1/2 -translate-y-1/2 z-20 bg-gradient-to-r from-cyan-500 to-purple-600 p-3 rounded-full hover:scale-125 transition-all duration-300 shadow-lg hover:shadow-cyan-500/50 group/btn"
+            aria-label="Scroll left"
+          >
+            <ChevronLeft className="w-6 h-6 text-white group-hover/btn:scale-110 transition-transform" />
+          </button>
+
+          {/* Right Navigation Button */}
+          <button
+            onClick={() => scroll('right')}
+            className="absolute -right-6 md:right-0 top-1/2 -translate-y-1/2 z-20 bg-gradient-to-r from-cyan-500 to-purple-600 p-3 rounded-full hover:scale-125 transition-all duration-300 shadow-lg hover:shadow-cyan-500/50 group/btn"
+            aria-label="Scroll right"
+          >
+            <ChevronRight className="w-6 h-6 text-white group-hover/btn:scale-110 transition-transform" />
+          </button>
+
+          {/* Infinite Scrollable Content */}
+          <div className="relative">
+            {/* Blur Overlay with Text */}
+            <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
+              <div className="relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/30 via-purple-500/30 to-pink-500/30 blur-3xl" />
+                <div className="relative bg-black/80 backdrop-blur-md px-12 py-6 rounded-2xl border border-cyan-500/30 shadow-2xl">
+                  <h3 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent text-center whitespace-nowrap">
+                    Will be unveiled soon
+                  </h3>
+                  <div className="w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent mt-3" />
+                </div>
+              </div>
             </div>
 
-            <div className="relative z-10 max-w-7xl mx-auto">
-                <div className="text-center mb-16">
-                    <h2 className="text-4xl md:text-6xl font-bold text-3d mb-6">
-                        Innovation Tracks
-                    </h2>
-                    <p className="text-xl text-cyan-400 glow-text">
-                        Choose your domain and shape the future
-                    </p>
-                    <p className="text-xl md:text-2xl font-semibold text-purple-300 mt-4 animate-pulse drop-shadow-[0_0_6px_rgba(168,85,247,0.7)]">
-    Press ← or → arrow keys to unlock Secret Game Mode
-</p>
-
-                    <div className="w-32 h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent mx-auto mt-6" />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {tracks.map((track, index) => {
-                        const Icon = track.icon;
-                        return (
-                            <div
-                                key={index}
-                                className="holographic-card p-8 group hover:scale-105 transition-all duration-300 cursor-pointer"
-                                style={{ animationDelay: `${index * 100}ms` }}
-                            >
-                                <div className={`w-16 h-16 rounded-lg bg-gradient-to-br ${track.color} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 glow-icon`}>
-                                    <Icon className="w-8 h-8 text-white" />
-                                </div>
-
-                                <h3 className="text-2xl font-bold text-cyan-300 mb-4 group-hover:text-cyan-200 transition-colors">
-                                    {track.title}
-                                </h3>
-
-                                <p className="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors">
-                                    {track.description}
-                                </p>
-
-                                <div className="mt-6 flex items-center text-purple-400 group-hover:text-purple-300 transition-colors">
-                                    <span className="text-sm uppercase tracking-wider"></span>
-                                    
-                                </div>
-                            </div>
-                        );
-                    })}
-                </div>
+            {/* Blurred Content */}
+            <div
+              ref={scrollContainerRef}
+              onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseLeave}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              className="sponsors-container flex gap-8 overflow-x-auto py-12 px-8 select-none blur-sm"
+              style={{
+                cursor: isDragging ? 'grabbing' : 'grab',
+                scrollBehavior: 'smooth'
+              }}
+            >
+              {/* Infinite loop: 3 copies of sponsors for seamless scrolling */}
+              {[...Array(3)].map((_, setIndex) =>
+                sponsorsData.map((sponsor, index) => {
+                  const Icon = sponsor.icon;
+                  const uniqueKey = `${setIndex}-${index}`;
+                  
+                  return (
+                    <div
+                      key={uniqueKey}
+                      className="flex flex-col items-center justify-center px-8 py-8 flex-shrink-0 group/sponsor hover:scale-110 transition-all duration-300 ease-out"
+                    >
+                      {/* Glow effect on hover */}
+                      <div className="absolute -inset-8 bg-gradient-to-r from-cyan-500/0 via-purple-500/0 to-pink-500/0 group-hover/sponsor:from-cyan-500/20 group-hover/sponsor:via-purple-500/20 group-hover/sponsor:to-pink-500/20 rounded-full blur-xl opacity-0 group-hover/sponsor:opacity-100 transition-all duration-300 -z-10" />
+                      
+                      <div
+                        className={`w-28 h-28 rounded-full bg-gradient-to-br ${sponsor.color} flex items-center justify-center mb-4 shadow-xl group-hover/sponsor:shadow-2xl group-hover/sponsor:shadow-cyan-500/50 transition-all duration-300 transform group-hover/sponsor:scale-110`}
+                      >
+                        <Icon className="w-14 h-14 text-white" />
+                      </div>
+                      <h3 className="text-lg md:text-xl font-bold text-white whitespace-nowrap text-center">
+                        {sponsor.company}
+                      </h3>
+                      <div className="w-12 h-1 bg-gradient-to-r from-cyan-500 to-purple-600 mt-3 opacity-0 group-hover/sponsor:opacity-100 transition-opacity duration-300" />
+                    </div>
+                  );
+                })
+              )}
             </div>
-        </section>
-    );
+          </div>
+
+          {/* Infinite scroll indicator */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-2">
+            {[...Array(3)].map((_, i) => (
+              <div
+                key={i}
+                className={`h-1 rounded-full transition-all duration-300 ${
+                  i === 1 ? 'w-8 bg-cyan-400' : 'w-2 bg-gray-600'
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Info Text */}
+        <div className="mt-20 text-center">
+          <p className="text-lg text-purple-300 mb-2">
+            Thank you to our amazing sponsors for making this event possible
+          </p>
+          <p className="text-sm text-gray-400 flex items-center justify-center gap-2">
+            <span></span> 
+          </p>
+        </div>
+      </div>
+    </section>
+  );
 }
