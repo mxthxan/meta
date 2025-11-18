@@ -230,7 +230,7 @@ const GalaxiaGame = ({ onGameOver }) => {
 const tracks = [
     {
         icon: Cpu,
-        title: 'Smart Cities & Technology',
+        title: 'Smart Cities & Automation',
         description: 'Build intelligent urban solutions powered by IoT, AI, and data analytics',
         color: 'from-cyan-500 to-blue-600'
     },
@@ -242,14 +242,14 @@ const tracks = [
     },
     {
         icon: Code,
-        title: 'Developer Tools',
+        title: 'Developer Productivity Tools',
         description: 'Craft next-gen tools that empower developers and enhance productivity',
         color: 'from-green-500 to-teal-600'
     },
     {
         icon: Wifi,
-        title: 'IoT & Smart Systems',
-        description: 'Design connected ecosystems that transform everyday interactions',
+        title: 'Will be revealed Soon',
+        description: 'Will be revealed Soon',
         color: 'from-orange-500 to-red-600'
     },
     {
